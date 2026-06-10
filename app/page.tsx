@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 const SPORTS = [
   { id: 'badminton', label: 'Badminton', emoji: '🏸' },
@@ -17,6 +17,7 @@ const LEVELS = [
 ]
 
 type State = 'idle' | 'generating' | 'done' | 'error'
+type VideoState = 'idle' | 'loading' | 'ready' | 'error'
 
 interface DrillResult {
   script: string
@@ -32,12 +33,17 @@ export default function Home() {
   const [state, setState] = useState<State>('idle')
   const [result, setResult] = useState<DrillResult | null>(null)
   const [error, setError] = useState('')
+  const [videoState, setVideoState] = useState<VideoState>('idle')
+  const [videoUrl, setVideoUrl] = useState<string>('')
+  const drillRef = useRef<DrillResult | null>(null)
 
   async function generate() {
     if (!sport || !level) return
     setState('generating')
     setError('')
     setResult(null)
+    setVideoState('idle')
+    setVideoUrl('')
     try {
       const res = await fetch('/api/generate-drill', {
         method: 'POST',
@@ -46,11 +52,35 @@ export default function Home() {
       })
       if (!res.ok) throw new Error(await res.text())
       const data = await res.json()
+      drillRef.current = data
       setResult(data)
       setState('done')
+      // Fire video generation in background — doesn't block drill display
+      generateVideo(sport, data.drillName)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Generation failed')
       setState('error')
+    }
+  }
+
+  async function generateVideo(sportId: string, drillName: string) {
+    setVideoState('loading')
+    try {
+      const res = await fetch('/api/generate-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sport: sportId, drillName }),
+      })
+      if (!res.ok) { setVideoState('error'); return }
+      const data = await res.json()
+      if (data.videoUrl) {
+        setVideoUrl(data.videoUrl)
+        setVideoState('ready')
+      } else {
+        setVideoState('error')
+      }
+    } catch {
+      setVideoState('error')
     }
   }
 
@@ -224,15 +254,28 @@ export default function Home() {
               <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
                 {result.script}
               </div>
-              {result.videoUrl && (
-                <div style={{ marginTop: 24 }}>
-                  <video
-                    src={result.videoUrl}
-                    controls
-                    style={{ width: '100%', borderRadius: 12, maxHeight: 400, background: '#000' }}
-                  />
-                </div>
-              )}
+              {/* AI video — loads after drill */}
+              <div style={{ marginTop: 24 }}>
+                {videoState === 'loading' && (
+                  <div style={{ padding: '14px 18px', borderRadius: 10, background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid #4ade80', borderTopColor: 'transparent', animation: 'spin 0.7s linear infinite' }} />
+                    <span style={{ fontSize: 13, color: 'rgba(74,222,128,0.8)' }}>Generating AI demo video… (1-2 min)</span>
+                  </div>
+                )}
+                {videoState === 'ready' && videoUrl && (
+                  <div>
+                    <p style={{ fontSize: 12, color: 'rgba(74,222,128,0.7)', marginBottom: 8, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>AI Demo Video</p>
+                    <video
+                      src={videoUrl}
+                      controls
+                      style={{ width: '100%', borderRadius: 12, maxHeight: 400, background: '#000' }}
+                    />
+                  </div>
+                )}
+                {videoState === 'error' && (
+                  <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>Video unavailable — drill script above is your full guide.</p>
+                )}
+              </div>
               <button
                 onClick={() => { setState('idle'); setResult(null) }}
                 style={{
@@ -254,6 +297,7 @@ export default function Home() {
           from { opacity: 0; transform: translateY(16px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
         @media (prefers-reduced-motion: reduce) {
           * { animation: none !important; transition: none !important; }
         }
