@@ -3,8 +3,6 @@ import Groq from 'groq-sdk'
 
 export const runtime = 'nodejs'
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
-
 const DRILL_NAMES: Record<string, Record<string, string[]>> = {
   badminton: {
     beginner: ['Shadow Footwork Drill', 'Clear & Return Drill', 'Net Lift Sequence'],
@@ -43,6 +41,7 @@ export async function POST(req: NextRequest) {
     const { sport, level, focus } = await req.json()
     if (!sport || !level) return NextResponse.json({ error: 'sport and level required' }, { status: 400 })
 
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
     const drillName = pickDrill(sport, level)
     const focusNote = focus ? ` Focus specifically on: ${focus}.` : ''
 

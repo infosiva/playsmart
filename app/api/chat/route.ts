@@ -3,11 +3,10 @@ import Groq from 'groq-sdk'
 
 export const runtime = 'nodejs'
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
-
 export async function POST(req: NextRequest) {
   try {
     const { messages } = await req.json()
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
     const completion = await groq.chat.completions.create({
       model: 'llama-3.1-8b-instant',
