@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import FloatingChatWrapper from '@/components/FloatingChatWrapper'
+import FeedbackWidget from '@/components/FeedbackWidget'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://playsmart.app'),
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <FloatingChatWrapper />
+        <FeedbackWidget siteName="PlaySmart" />
       </body>
     </html>
   )
