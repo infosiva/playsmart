@@ -1,3 +1,5 @@
+import { unstable_cache } from 'next/cache';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let _edgeGet: ((key: string) => Promise<any>) | null = null;
 try {
@@ -52,7 +54,13 @@ export interface SiteTheme {
  */
 export async function loadSiteTheme(siteId: string): Promise<SiteTheme | null> {
   try {
-    const theme = _edgeGet ? await _edgeGet(`theme_${siteId}`) as SiteTheme | undefined : undefined;
+    const theme = _edgeGet
+      ? await unstable_cache(
+          () => _edgeGet!(`theme_${siteId}`),
+          ['site-theme', siteId],
+          { revalidate: 600 },
+        )() as SiteTheme | undefined
+      : undefined;
     return theme ?? null;
   } catch {
     return null;
