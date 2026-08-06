@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
+import { AI_LIMITER } from '@/lib/rateLimit'
 
 export const runtime = 'nodejs'
 
@@ -20,6 +21,8 @@ async function askGroq(model: string, messages: unknown[]) {
 }
 
 export async function POST(req: NextRequest) {
+  const limited = AI_LIMITER.check(req); if (limited) return limited
+
   const { messages } = await req.json()
 
   // Fallback chain: fast model first, then bigger model, never a raw 500 to the user

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
+import { AI_LIMITER } from '@/lib/rateLimit'
 
 export const runtime = 'nodejs'
 
@@ -37,6 +38,8 @@ function pickDrill(sport: string, level: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  const limited = AI_LIMITER.check(req); if (limited) return limited
+
   try {
     const { sport, level, focus } = await req.json()
     if (!sport || !level) return NextResponse.json({ error: 'sport and level required' }, { status: 400 })
