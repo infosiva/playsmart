@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import './globals.css'
 import FloatingChatWrapper from '@/components/FloatingChatWrapper'
 import FeedbackWidget from '@/components/FeedbackWidget'
@@ -29,6 +30,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <meta name="google-adsense-account" content="ca-pub-4237294630161176" />
+        <Script
+                  async
+                  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4237294630161176"
+                  crossOrigin="anonymous"
+                  strategy="afterInteractive"
+                />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
