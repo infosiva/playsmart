@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Script from 'next/script'
 import './globals.css'
 import FloatingChatWrapper from '@/components/FloatingChatWrapper'
+import { getSiteFlags } from '@/lib/flags'
 import FeedbackWidget from '@/components/FeedbackWidget'
 
 export const metadata: Metadata = {
@@ -25,7 +26,8 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const flags = await getSiteFlags('playsmart')
   return (
     <html lang="en">
       <head>
@@ -52,7 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         {children}
-        <FloatingChatWrapper />
+        {flags.chatbot && <FloatingChatWrapper />}
         <FeedbackWidget siteName="PlaySmart" />
       </body>
     </html>
