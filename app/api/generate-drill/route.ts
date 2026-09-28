@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     const focusNote = focus ? ` Focus specifically on: ${focus}.` : ''
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
+      model: 'openai/gpt-oss-20b',
       max_tokens: 600,
       messages: [
         {
