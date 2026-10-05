@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { MagneticButton } from '@infosiva/shared-ui/modern'
 
 const SPORTS = [
   { id: 'badminton', label: 'Badminton', emoji: '🏸' },
@@ -213,7 +214,7 @@ export default function Home() {
         </section>
 
         {/* Generate button */}
-        <button
+        <MagneticButton
           onClick={generate}
           disabled={!sport || !level || state === 'generating'}
           style={{
@@ -228,7 +229,7 @@ export default function Home() {
           onMouseLeave={e => { if (sport && level) (e.currentTarget as HTMLButtonElement).style.background = '#4ade80' }}
         >
           {state === 'generating' ? '⚙ Generating drill...' : 'Generate My Drill →'}
-        </button>
+        </MagneticButton>
 
         {/* Error */}
         {state === 'error' && (

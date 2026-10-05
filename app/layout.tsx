@@ -5,6 +5,7 @@ import FloatingChatWrapper from '@/components/FloatingChatWrapper'
 import { getSiteFlags } from '@/lib/flags'
 import FeedbackWidget from '@/components/FeedbackWidget'
 
+import { MotionProvider } from "@infosiva/shared-ui/modern";
 export const metadata: Metadata = {
   metadataBase: new URL('https://playsmart.app'),
   title: 'PlaySmart — AI Sports Coaching Videos for Badminton, Tennis, Football',
@@ -53,7 +54,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </head>
       <body>
-        {children}
+        <MotionProvider>{children}</MotionProvider>
         {flags.chatbot && <FloatingChatWrapper />}
         <FeedbackWidget siteName="PlaySmart" />
       </body>
