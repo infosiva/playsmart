@@ -1,3 +1,4 @@
+import { sanitizeUserInput } from '@/lib/guard'
 import { NextRequest, NextResponse } from 'next/server'
 import { AI_LIMITER } from '@/lib/rateLimit'
 import { chatChain } from '@/lib/chat-chain'
@@ -14,6 +15,7 @@ export async function POST(req: NextRequest) {
   const limited = AI_LIMITER.check(req); if (limited) return limited
   try {
     const { messages } = await req.json()
+    for (const m of Array.isArray(messages) ? messages : []) if (m && typeof m.content === 'string') m.content = sanitizeUserInput(m.content).text
     const safe = (Array.isArray(messages) ? messages : []).slice(-10).map((m: { role?: string; content?: unknown }) => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: String(m.content ?? '').slice(0, 1000) })) as { role: 'user' | 'assistant'; content: string }[]
     const out = await chatChain([{ role: 'system', content: SYSTEM }, ...safe])
     return NextResponse.json({ content: out?.text ?? 'Chat is resting. Try again in a moment.' })
