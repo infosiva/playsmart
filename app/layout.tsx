@@ -4,6 +4,9 @@ import './globals.css'
 import FloatingChatWrapper from '@/components/FloatingChatWrapper'
 import { getSiteFlags } from '@/lib/flags'
 import FeedbackWidget from '@/components/FeedbackWidget'
+import { AnimatedBg } from '@/components/AnimatedBg'
+import Telemetry from '@/components/Telemetry'
+import { loadSiteTheme, buildThemeStyleTag, buildGa4Snippet } from '@/lib/theme-loader'
 
 import { MotionProvider } from "@infosiva/shared-ui/modern";
 export const metadata: Metadata = {
@@ -29,9 +32,13 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const flags = await getSiteFlags('playsmart')
+  const theme = await loadSiteTheme('playsmart')
+  const ga4 = buildGa4Snippet(theme)
   return (
-    <html lang="en">
+    <html lang="en" data-layout={theme?.layout?.archetype ?? 'default'}>
       <head>
+        <style id="site-theme" dangerouslySetInnerHTML={{ __html: buildThemeStyleTag(theme) }} />
+        {ga4 && <script dangerouslySetInnerHTML={{ __html: ga4 }} />}
         <meta name="google-adsense-account" content="ca-pub-4237294630161176" />
         <Script
                   async
@@ -54,9 +61,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </head>
       <body>
+        <AnimatedBg theme={theme} fallback="mesh" />
+        <Telemetry />
         <MotionProvider>{children}</MotionProvider>
         {flags.chatbot && <FloatingChatWrapper />}
-        <FeedbackWidget siteName="PlaySmart" />
+        <FeedbackWidget siteName="PlaySmart" position="left" />
       </body>
     </html>
   )

@@ -1,41 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Groq from 'groq-sdk'
 import { AI_LIMITER } from '@/lib/rateLimit'
+import { chatChain } from '@/lib/chat-chain'
 
 export const runtime = 'nodejs'
 
-const SYSTEM_PROMPT = `You are DrillBot, a sports coaching assistant for PlaySmart. You help athletes with drill advice, technique tips, training plans, and injury prevention for badminton, tennis, football, cricket, and basketball.
+const SYSTEM = `You are DrillBot, a sports coaching assistant for PlaySmart. You help athletes with drill advice, technique tips, training plans, and injury prevention for badminton, tennis, football, cricket, and basketball.
 
 Keep answers short (2-3 sentences max). Be practical and encouraging.
 
 If asked about something outside sports coaching, respond: "I'm trained for sports coaching. For that, try Google or ChatGPT!"`
 
-async function askGroq(model: string, messages: unknown[]) {
-  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
-  const completion = await groq.chat.completions.create({
-    model,
-    max_tokens: 300,
-    messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...(messages as any)],
-  })
-  return completion.choices[0]?.message?.content ?? undefined
-}
-
 export async function POST(req: NextRequest) {
   const limited = AI_LIMITER.check(req); if (limited) return limited
-
-  const { messages } = await req.json()
-
-  // Fallback chain: fast model first, then bigger model, never a raw 500 to the user
-  for (const model of ['llama-3.1-8b-instant', 'llama-3.3-70b-versatile']) {
-    try {
-      const content = await askGroq(model, messages)
-      if (content) return NextResponse.json({ content })
-    } catch {
-      // try next model
-    }
+  try {
+    const { messages } = await req.json()
+    const safe = (Array.isArray(messages) ? messages : []).slice(-10).map((m: { role?: string; content?: unknown }) => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: String(m.content ?? '').slice(0, 1000) })) as { role: 'user' | 'assistant'; content: string }[]
+    const out = await chatChain([{ role: 'system', content: SYSTEM }, ...safe])
+    return NextResponse.json({ content: out?.text ?? 'Chat is resting. Try again in a moment.' })
+  } catch (e) {
+    console.error(JSON.stringify({ level: 'error', scope: 'playsmart.chat', message: String((e as Error)?.message).slice(0, 200) }))
+    return NextResponse.json({ content: 'Chat is resting. Try again in a moment.' })
   }
-
-  return NextResponse.json({
-    content: "Chat is resting — try again in a moment.",
-  })
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import Logo from '@/components/Logo'
 import { MagneticButton } from '@infosiva/shared-ui/modern'
 
 const SPORTS = [
@@ -28,8 +29,8 @@ interface DrillResult {
 }
 
 export default function Home() {
-  const [sport, setSport] = useState<string>('')
-  const [level, setLevel] = useState<string>('')
+  const [sport, setSport] = useState<string>(SPORTS[0].id)
+  const [level, setLevel] = useState<string>(LEVELS[0].id)
   const [focus, setFocus] = useState('')
   const [state, setState] = useState<State>('idle')
   const [result, setResult] = useState<DrillResult | null>(null)
@@ -86,61 +87,47 @@ export default function Home() {
   }
 
   return (
-    <main style={{ minHeight: '100dvh', background: '#050e07', position: 'relative', overflow: 'hidden' }}>
-      {/* Background blobs */}
-      <div style={{
-        position: 'fixed', top: '10%', left: '20%', width: 500, height: 500,
-        background: 'radial-gradient(circle, rgba(74,222,128,0.06) 0%, transparent 70%)',
-        pointerEvents: 'none', zIndex: 0,
-      }} />
-      <div style={{
-        position: 'fixed', bottom: '10%', right: '10%', width: 400, height: 400,
-        background: 'radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 70%)',
-        pointerEvents: 'none', zIndex: 0,
-      }} />
-
+    <main style={{ minHeight: '100dvh', background: 'transparent', position: 'relative', overflow: 'hidden' }}>
       {/* Nav */}
       <nav style={{
         position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(5,14,7,0.8)', backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(74,222,128,0.12)',
+        background: 'rgba(255,245,248,0.82)', backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(225,29,116,0.12)',
         padding: '0 24px', height: 60,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: '-0.5px', color: '#fff' }}>
-          Play<span style={{ color: '#4ade80' }}>Smart</span>
-        </span>
-        <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', fontStyle: 'italic' }}>
+        <Logo />
+        <span style={{ fontSize: 13, color: 'rgba(42,11,28,0.62)', fontStyle: 'italic' }}>
           AI sports coaching
         </span>
       </nav>
 
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '60px 24px', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '28px 24px 40px', position: 'relative', zIndex: 1 }}>
         {/* Hero */}
-        <div style={{ textAlign: 'center', marginBottom: 56 }}>
+        <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <div style={{
             display: 'inline-block', padding: '6px 16px', borderRadius: 99,
-            background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.25)',
-            fontSize: 12, fontWeight: 600, color: '#4ade80', letterSpacing: '0.08em',
+            background: 'rgba(225,29,116,0.1)', border: '1px solid rgba(225,29,116,0.25)',
+            fontSize: 12, fontWeight: 600, color: 'var(--accent)', letterSpacing: '0.08em',
             marginBottom: 20, textTransform: 'uppercase',
           }}>
             AI-Powered Drill Generator
           </div>
           <h1 style={{
-            fontSize: 'clamp(36px, 6vw, 64px)', fontWeight: 900, lineHeight: 1.1,
-            letterSpacing: '-1.5px', color: '#fff', marginBottom: 16,
+            fontSize: 'clamp(30px, 5vw, 52px)', fontWeight: 900, lineHeight: 1.1,
+            letterSpacing: '-1.5px', color: '#2a0b1c', marginBottom: 16,
           }}>
             Train smarter.<br />
-            <span style={{ color: '#4ade80' }}>Level up faster.</span>
+            <span style={{ color: 'var(--accent)' }}>Level up faster.</span>
           </h1>
-          <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.55)', maxWidth: 500, margin: '0 auto' }}>
+          <p style={{ fontSize: 18, color: 'rgba(42,11,28,0.78)', maxWidth: 500, margin: '0 auto' }}>
             Pick your sport, skill level, and get AI-generated coaching drills tailored to you.
           </p>
         </div>
 
         {/* Sport picker */}
-        <section style={{ marginBottom: 40 }}>
-          <h2 style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: 16 }}>
+        <section style={{ marginBottom: 20 }}>
+          <h2 style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(42,11,28,0.62)', marginBottom: 10 }}>
             1. Choose your sport
           </h2>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -150,9 +137,9 @@ export default function Home() {
                 onClick={() => setSport(s.id)}
                 style={{
                   padding: '14px 22px', borderRadius: 12, border: '1px solid',
-                  borderColor: sport === s.id ? '#4ade80' : 'rgba(255,255,255,0.1)',
-                  background: sport === s.id ? 'rgba(74,222,128,0.12)' : 'rgba(255,255,255,0.03)',
-                  color: sport === s.id ? '#4ade80' : 'rgba(255,255,255,0.7)',
+                  borderColor: sport === s.id ? 'var(--accent)' : 'rgba(42,11,28,0.14)',
+                  background: sport === s.id ? 'rgba(225,29,116,0.12)' : 'rgba(255,255,255,0.75)',
+                  color: sport === s.id ? 'var(--accent)' : 'rgba(42,11,28,0.78)',
                   fontSize: 15, fontWeight: 600, cursor: 'pointer',
                   transition: 'all 0.15s cubic-bezier(0.23,1,0.32,1)',
                   display: 'flex', alignItems: 'center', gap: 8,
@@ -166,8 +153,8 @@ export default function Home() {
         </section>
 
         {/* Level picker */}
-        <section style={{ marginBottom: 40 }}>
-          <h2 style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: 16 }}>
+        <section style={{ marginBottom: 20 }}>
+          <h2 style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(42,11,28,0.62)', marginBottom: 10 }}>
             2. Your skill level
           </h2>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -177,9 +164,9 @@ export default function Home() {
                 onClick={() => setLevel(l.id)}
                 style={{
                   padding: '14px 22px', borderRadius: 12, border: '1px solid',
-                  borderColor: level === l.id ? '#4ade80' : 'rgba(255,255,255,0.1)',
-                  background: level === l.id ? 'rgba(74,222,128,0.12)' : 'rgba(255,255,255,0.03)',
-                  color: level === l.id ? '#4ade80' : 'rgba(255,255,255,0.7)',
+                  borderColor: level === l.id ? 'var(--accent)' : 'rgba(42,11,28,0.14)',
+                  background: level === l.id ? 'rgba(225,29,116,0.12)' : 'rgba(255,255,255,0.75)',
+                  color: level === l.id ? 'var(--accent)' : 'rgba(42,11,28,0.78)',
                   fontSize: 15, fontWeight: 600, cursor: 'pointer',
                   transition: 'all 0.15s cubic-bezier(0.23,1,0.32,1)',
                   textAlign: 'left',
@@ -193,8 +180,8 @@ export default function Home() {
         </section>
 
         {/* Optional focus */}
-        <section style={{ marginBottom: 40 }}>
-          <h2 style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', marginBottom: 16 }}>
+        <section style={{ marginBottom: 20 }}>
+          <h2 style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(42,11,28,0.62)', marginBottom: 10 }}>
             3. Focus area (optional)
           </h2>
           <input
@@ -204,12 +191,12 @@ export default function Home() {
             placeholder={sport === 'badminton' ? 'e.g. smash technique, footwork, net play...' : sport === 'tennis' ? 'e.g. serve, backhand, net approach...' : 'e.g. dribbling, passing, shooting...'}
             style={{
               width: '100%', maxWidth: 480, padding: '14px 18px', borderRadius: 12,
-              background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff', fontSize: 15, outline: 'none',
+              background: 'rgba(255,255,255,0.75)', border: '1px solid rgba(42,11,28,0.14)',
+              color: '#2a0b1c', fontSize: 15, outline: 'none',
               transition: 'border-color 0.15s',
             }}
-            onFocus={e => { e.target.style.borderColor = 'rgba(74,222,128,0.4)' }}
-            onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.1)' }}
+            onFocus={e => { e.target.style.borderColor = 'rgba(225,29,116,0.4)' }}
+            onBlur={e => { e.target.style.borderColor = 'rgba(42,11,28,0.14)' }}
           />
         </section>
 
@@ -219,21 +206,21 @@ export default function Home() {
           disabled={!sport || !level || state === 'generating'}
           style={{
             padding: '16px 40px', borderRadius: 12,
-            background: sport && level ? '#4ade80' : 'rgba(255,255,255,0.08)',
-            color: sport && level ? '#050e07' : 'rgba(255,255,255,0.3)',
+            background: sport && level ? 'var(--accent)' : 'rgba(255,255,255,0.75)',
+            color: sport && level ? '#fff' : 'rgba(42,11,28,0.55)',
             fontSize: 16, fontWeight: 800, cursor: sport && level ? 'pointer' : 'not-allowed',
             border: 'none', transition: 'all 0.15s cubic-bezier(0.23,1,0.32,1)',
             letterSpacing: '-0.3px',
           }}
-          onMouseEnter={e => { if (sport && level) (e.currentTarget as HTMLButtonElement).style.background = '#86efac' }}
-          onMouseLeave={e => { if (sport && level) (e.currentTarget as HTMLButtonElement).style.background = '#4ade80' }}
+          onMouseEnter={e => { if (sport && level) (e.currentTarget as HTMLElement).style.background = '#be1860' }}
+          onMouseLeave={e => { if (sport && level) (e.currentTarget as HTMLElement).style.background = 'var(--accent)' }}
         >
           {state === 'generating' ? '⚙ Generating drill...' : 'Generate My Drill →'}
         </MagneticButton>
 
         {/* Error */}
         {state === 'error' && (
-          <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', color: '#fca5a5', fontSize: 14 }}>
+          <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 12, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', color: '#9f1239', fontSize: 14 }}>
             {error}
           </div>
         )}
@@ -243,29 +230,29 @@ export default function Home() {
           <div style={{ marginTop: 40, animation: 'fadeUp 0.3s cubic-bezier(0.23,1,0.32,1)' }}>
             <div style={{
               padding: '32px', borderRadius: 16,
-              background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.2)',
+              background: 'rgba(225,29,116,0.05)', border: '1px solid rgba(225,29,116,0.2)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
                 <span style={{ fontSize: 24 }}>🎯</span>
                 <div>
-                  <h3 style={{ fontSize: 20, fontWeight: 800, color: '#fff', letterSpacing: '-0.3px' }}>{result.drillName}</h3>
-                  <span style={{ fontSize: 13, color: 'rgba(74,222,128,0.8)' }}>{result.duration}</span>
+                  <h3 style={{ fontSize: 20, fontWeight: 800, color: '#2a0b1c', letterSpacing: '-0.3px' }}>{result.drillName}</h3>
+                  <span style={{ fontSize: 13, color: 'rgba(225,29,116,0.8)' }}>{result.duration}</span>
                 </div>
               </div>
-              <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+              <div style={{ fontSize: 15, color: 'rgba(42,11,28,0.78)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
                 {result.script}
               </div>
               {/* AI video — loads after drill */}
               <div style={{ marginTop: 24 }}>
                 {videoState === 'loading' && (
-                  <div style={{ padding: '14px 18px', borderRadius: 10, background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)', display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid #4ade80', borderTopColor: 'transparent', animation: 'spin 0.7s linear infinite' }} />
-                    <span style={{ fontSize: 13, color: 'rgba(74,222,128,0.8)' }}>Generating AI demo video… (1-2 min)</span>
+                  <div style={{ padding: '14px 18px', borderRadius: 10, background: 'rgba(225,29,116,0.06)', border: '1px solid rgba(225,29,116,0.15)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid var(--accent)', borderTopColor: 'transparent', animation: 'spin 0.7s linear infinite' }} />
+                    <span style={{ fontSize: 13, color: 'rgba(225,29,116,0.8)' }}>Generating AI demo video… (1-2 min)</span>
                   </div>
                 )}
                 {videoState === 'ready' && videoUrl && (
                   <div>
-                    <p style={{ fontSize: 12, color: 'rgba(74,222,128,0.7)', marginBottom: 8, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>AI Demo Video</p>
+                    <p style={{ fontSize: 12, color: 'rgba(225,29,116,0.7)', marginBottom: 8, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>AI Demo Video</p>
                     <video
                       src={videoUrl}
                       controls
@@ -274,15 +261,15 @@ export default function Home() {
                   </div>
                 )}
                 {videoState === 'error' && (
-                  <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)' }}>Video unavailable — drill script above is your full guide.</p>
+                  <p style={{ fontSize: 12, color: 'rgba(42,11,28,0.3)' }}>Video unavailable — drill script above is your full guide.</p>
                 )}
               </div>
               <button
                 onClick={() => { setState('idle'); setResult(null) }}
                 style={{
                   marginTop: 20, padding: '10px 20px', borderRadius: 8,
-                  background: 'transparent', border: '1px solid rgba(74,222,128,0.3)',
-                  color: '#4ade80', fontSize: 14, cursor: 'pointer',
+                  background: 'transparent', border: '1px solid rgba(225,29,116,0.3)',
+                  color: 'var(--accent)', fontSize: 14, cursor: 'pointer',
                   transition: 'all 0.15s',
                 }}
               >
